@@ -1,0 +1,6 @@
+{
+	"test": {
+		"before": "sleep 5; touch y",
+		"after": "touch x"
+	}
+}
