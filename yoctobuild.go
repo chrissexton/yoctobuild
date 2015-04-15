@@ -1,3 +1,5 @@
+// © 2015 the yoctobuild Authors under the MIT license. See AUTHORS for the list of authors.
+
 package main
 
 import (
