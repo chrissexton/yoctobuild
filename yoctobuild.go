@@ -15,6 +15,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"sync"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -26,7 +27,8 @@ var (
 	addr       = flag.String("addr", ":3001", "Address to serve on")
 	secret     = flag.String("secret", "12345", "Secret to authorize builds")
 
-	projects map[string]*project
+	projects   map[string]*project
+	buildMutex sync.Mutex
 )
 
 type project struct {
@@ -38,6 +40,7 @@ type project struct {
 }
 
 func runBuild(name string) {
+	buildMutex.Lock()
 	steps := fmt.Sprintf("mkdir -p %s; cd %s; %s",
 		name, name, projects[name].Before)
 	script := bytes.NewBufferString(steps)
@@ -58,6 +61,7 @@ func runBuild(name string) {
 	if err == nil {
 		runPostBuild(name)
 	}
+	buildMutex.Unlock()
 }
 
 func runPostBuild(name string) {
